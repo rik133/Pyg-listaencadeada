@@ -96,7 +96,8 @@ class tela():
         self.width = 640
         self.height = 480
         self.size = (self.width, self.height)
-        self.screen = pygame.display.set_mode(self.size)
+        self.flags = pygame.RESIZABLE | pygame.DOUBLEBUF | pygame.HWSURFACE
+        self.screen = pygame.display.set_mode(self.size, self.flags)
         self.image = pygame.draw.rect(self.screen, (0, 0, 0), (0, 0, 640, 480))
         self.data = None
         self.prox = None
@@ -104,7 +105,7 @@ class tela():
         
    
     def update(self):
-        
+        pygame.display.flip()
         '''self.screen.blit(world.image, (world.x, world.y))
         self.screen.blit(player.image, (player.x, player.y))'''
         pygame.display.update()
@@ -117,7 +118,7 @@ class world():
         self.image = pygame.draw.rect(screen.screen, (0, 0, 0), (self.x, self.y, 640, 480))
         
     def update(self):
-        self.image = pygame.draw.rect(screen.screen, (0, 0, 0), (self.x, self.y, 640, 480))
+        
         if player.x > 640:
             player.xlr8 = 0
             player.x = 639
@@ -170,9 +171,11 @@ class player():
     def update(self):
         self.move()
         
+
 pygame.init()
 screen = tela()
 pygame.display.set_caption('gojo')
+
 fps = pygame.time.Clock()
 world = world()
 player = player()
@@ -189,6 +192,8 @@ while True:
             sys.exit()
     screen.update()
     world.update()
+    
+    
     
     
     
