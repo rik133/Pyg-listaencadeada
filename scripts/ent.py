@@ -103,7 +103,7 @@ class Player(PhysicsEntity):
                 self.flip = False
             else:
                 self.flip = True
-            self.set_state('run')
+            
         
         if not self.wall_slide:
             if self.jump:

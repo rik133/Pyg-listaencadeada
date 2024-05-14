@@ -10,7 +10,7 @@ from scripts.ent import PhysicsEntity, Player
 from scripts.tilemap import Tilemap
 from scripts.clouds import Clouds
 from scripts.particle import Particle
-from loadermap import loader
+
 
 class game():
     def __init__(self):
@@ -27,11 +27,11 @@ class game():
             'tree': get_images('mundo/tileset.png', spritesheetsize = [48, 48], spritesize = [48, 48], spritsheetstart= [0, 0]),
             'bg1': get_image('mundo/background.png'),
             'clouds': get_imag_dir('mundo/clouds'),
-            'player/idle' : Animation(get_images('player/idle-sheet1.png', spritesheetsize = [32*12, 32], spritesize = [32, 32], spritsheetstart= [0, 0]), ani_dur = 3),
-            'player/run' : Animation(get_images('player/run-sheet.png', spritesheetsize = [32*4, 32], spritesize = [32, 32], spritsheetstart= [0, 0]), ani_dur = 5),
-            'player/jump' : Animation(get_images('player/jump-sheet.png', spritesheetsize = [32*6, 32], spritesize = [32, 32], spritsheetstart= [0, 0]), ani_dur = 6),
-            'player/roll' : Animation(get_images('player/roll-sheet.png', spritesheetsize = [32*12, 32], spritesize = [32, 32], spritsheetstart= [0, 0]), ani_dur = 5),
-            'player/walk' : Animation(get_images('player/walk-sheet.png', spritesheetsize = [32*4, 32], spritesize = [32, 32], spritsheetstart= [0, 0]), ani_dur = 5),
+            'player/idle' : Animation(get_images('player/FinnSpriteidle.png', spritesheetsize = [32*9, 32], spritesize = [32, 32], spritsheetstart= [0, 0]), ani_dur = 10),
+            'player/run' : Animation(get_images('player/FinnSpriterun.png', spritesheetsize = [32*6, 32], spritesize = [32, 32], spritsheetstart= [0, 0]), ani_dur = 5),
+            'player/jump' : Animation(get_images('player/FinnSpritejump.png', spritesheetsize = [32, 32], spritesize = [32, 32], spritsheetstart= [0, 0]), ani_dur = 6),
+            'player/roll' : Animation(get_images('player/FinnSprite.png', spritesheetsize = [32*2, 32], spritesize = [32, 32], spritsheetstart= [0, 0]), ani_dur = 5),
+            'player/walk' : Animation(get_images('player/FinnSpriterun.png', spritesheetsize = [32*6, 32], spritesize = [32, 32], spritsheetstart= [0, 0]), ani_dur = 5),
             'particle/leaf': Animation(get_imag_dir('particles/leaf'), ani_dur=20, loop=False),
             'portal': get_images('mundo/portal.png', spritesheetsize = [32, 32], spritesize = [32, 32], spritsheetstart= [0, 0]),
         }
@@ -40,9 +40,9 @@ class game():
         self.clouds = Clouds(self.coisas['clouds'], count=16)
         
         
-        self.player = Player(self,(50, 50), (32,16))
+        self.player = Player(self,(50, 50), (20,14))
         self.tilemap = Tilemap(self,tile_size=16)
-        self.fases = loader()
+       
 
 
         
@@ -62,7 +62,7 @@ class game():
         
     def load_level(self, level):
         
-        self.fases.load(level)
+        self.tilemap.load('dados/mapas/' + str(level) + '.json')
         self.transition = -30
         self.player.terminou = False
         
@@ -74,7 +74,7 @@ class game():
             if self.player.terminou == True:
                 self.transition += 1
                 if self.transition > 30:
-                    self.level = min(self.level + 1, len(os.listdir('pygame-listaencadeada/dados/mapas')) - 1)
+                    self.level = min(self.level + 1, len(os.listdir('dados\mapas')) - 1)
                     self.load_level(self.level)
             if self.transition < 0:
                 self.transition += 1
@@ -95,6 +95,7 @@ class game():
             self.clouds.update()
             self.clouds.render(self.camera, offset=render_camove)
             self.tilemap.render(self.camera, offset=render_camove)
+            
             
             self.player.update(self.tilemap, (self.mov[1] - self.mov[0], 0))
             self.player.render(self.camera, offset=render_camove)
@@ -120,14 +121,7 @@ class game():
                         print('direita')
                     if event.key == K_w:
                         self.player.pulo()
-                    if event.key == K_LEFT:
-                        self.level -= 1
-                        if self.level <= 0:
-                            self.level = -1
-                        
-
-                    if event.key == K_RIGHT:
-                        self.level += 1
+                    
                          
                         
                     if event.key == K_DOWN:
@@ -135,9 +129,10 @@ class game():
                         self.player.terminou = True
                         
                 if event.type == KEYUP:
-                    if event.key == K_LEFT:
+                    
+                    if event.key == K_a:
                         self.mov[0] = False
-                    if event.key == K_RIGHT:
+                    if event.key == K_d:
                         self.mov[1] = False
             if self.transition:
                 transition_surf = pygame.Surface(self.camera.get_size())
