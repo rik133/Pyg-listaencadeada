@@ -17,8 +17,8 @@ class editor():
         
         self.coisas = {
             'tileset': get_images('mundo/tileset.png', spritesheetsize = [48, 142], spritesize = [16, 16], spritsheetstart= [0, 16*3]),
-            'tileset1': get_images('mundo/sheet1.png', spritesheetsize = [112, 64], spritesize = [16, 16], spritsheetstart= [0, 0]),
-            'tileset2': get_images('mundo/tileset1.png', spritesheetsize = [16*3, 160], spritesize = [16, 16], spritsheetstart= [0, 16*3]),
+            'tileset1': get_images('mundo/sheettiles.png', spritesheetsize = [112, 64], spritesize = [16, 16], spritsheetstart= [0, 0]),
+            'tileset2': get_images('mundo/tileset2.png', spritesheetsize = [16*3, 160], spritesize = [16, 16], spritsheetstart= [0, 16*3]),
             'tree': get_images('mundo/tileset.png', spritesheetsize = [48, 48], spritesize = [48, 48], spritsheetstart= [0, 0]),
             'portal': get_images('mundo/portal.png', spritesheetsize = [32, 32], spritesize = [32, 32], spritsheetstart= [0, 0])
             
@@ -43,7 +43,7 @@ class editor():
         self.shift = False
         self.ongrid = True
     def load_level(self, map_id):
-        self.tilemap.load('dados/mapas/' + str(map_id) + '.json')
+        self.tilemap.load('pygame-listaencadeada/dados/mapas/' + str(map_id) + '.json')
         self.transition = -30
         
     def run(self):

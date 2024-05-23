@@ -1,6 +1,6 @@
 import pygame
 import os 
-BASE_PATH = 'imagens pygame/'
+BASE_PATH = 'pygame-listaencadeada/imagens pygame/'
 
 def cut_image(x, y, width, height , spritesheet):
     sprite = pygame.Surface((width, height))

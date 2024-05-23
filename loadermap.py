@@ -1,6 +1,6 @@
 import os
 import json
-from scripts.utility import fases
+from scripts.utility import map, fases
 BASE_PATH = 'pygame-listaencadeada/dados/mapas/'
 class loader():
     def __init__(self):
