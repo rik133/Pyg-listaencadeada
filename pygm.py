@@ -32,7 +32,7 @@ class game():
             'player/jump' : Animation(get_images('player/jump-sheet.png', spritesheetsize = [32*6, 32], spritesize = [32, 32], spritsheetstart= [0, 0]), ani_dur = 6),
             'player/roll' : Animation(get_images('player/roll-sheet.png', spritesheetsize = [32*12, 32], spritesize = [32, 32], spritsheetstart= [0, 0]), ani_dur = 5),
             'player/walk' : Animation(get_images('player/walk-sheet.png', spritesheetsize = [32*4, 32], spritesize = [32, 32], spritsheetstart= [0, 0]), ani_dur = 5),
-            'particle/leaf': Animation(get_imag_dir('particles/leaf'), ani_dur=20, loop=False),
+            'particle/leaf': Animation(get_imag_dir('particles/leaf'), ani_dur=40, loop=False),
             'portal': get_images('mundo/portal.png', spritesheetsize = [32, 32], spritesize = [32, 32], spritsheetstart= [0, 0]),
         }
         
@@ -40,20 +40,14 @@ class game():
         self.clouds = Clouds(self.coisas['clouds'], count=16)
         
         
-        self.player = Player(self,(50, 50), (32,16))
+        self.player = Player(self,(50, 50), (16,16))
         self.tilemap = Tilemap(self,tile_size=16)
         
 
 
         
         
-        self.leaf_spawners = []
-        self.saidas = []
-        for tree in self.tilemap.extract([('tree', 1)], keep=True):
-            self.leaf_spawners.append(pygame.Rect(4 + tree['pos'][0], 4 + tree['pos'][1], 23, 13))
-        for saida in self.tilemap.extract([('portal', 10)], keep=True):
-            self.saidas.append(pygame.Rect(saida['pos'][0], saida['pos'][1], 16, 16))
-        self.particles = []
+        
         
         self.level = 0
         
@@ -61,13 +55,24 @@ class game():
         self.cameramove = [0,0]
         
     def load_level(self, level):
+        self.tilemap.load('pygame-listaencadeada/dados/mapas/' + str(level) + '.json')
         
-        self.tilemap.load('dados/mapas/' + str(level) + '.json')
+        self.leaf_spawners = []
+        self.saidas = []
+        
+        for tree in self.tilemap.extract([("tree", 0)], keep=True):
+            self.leaf_spawners.append(pygame.Rect(4 + tree['pos'][0], 4 + tree['pos'][1], 32, 20))
+        for saida in self.tilemap.extract([('portal', 0)], keep=True):
+            self.saidas.append(pygame.Rect(saida['pos'][0], saida['pos'][1], 16, 16))
+        self.particles = []
+        
+        
         self.transition = -30
         self.player.terminou = False
         
         
     def run(self):
+        
         while True:
             self.camera.blit(pygame.transform.scale(self.coisas['bg1'], self.camera.get_size()), (0, 0))
             
@@ -90,7 +95,7 @@ class game():
             for rect in self.leaf_spawners:
                 if random.random() * 49999 < rect.width * rect.height:
                     pos = (rect.x + random.random() * rect.width, rect.y + random.random() * rect.height)
-                    self.particles.append(Particle(self, 'leaf', pos, velocity=[-0.1, 0.3], frame=random.randint(0, 20)))
+                    self.particles.append(Particle(self, 'leaf', pos, velocity=[-0.1, 0.5], frame=random.randint(0, 20)))
             
             self.clouds.update()
             self.clouds.render(self.camera, offset=render_camove)
@@ -127,9 +132,9 @@ class game():
                         self.player.terminou = True
                         
                 if event.type == KEYUP:
-                    if event.key == K_LEFT:
+                    if event.key == K_a:
                         self.mov[0] = False
-                    if event.key == K_RIGHT:
+                    if event.key == K_d:
                         self.mov[1] = False
             if self.transition:
                 transition_surf = pygame.Surface(self.camera.get_size())
