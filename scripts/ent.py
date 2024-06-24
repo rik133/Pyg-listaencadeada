@@ -1,7 +1,10 @@
 import pygame
+import math
+import random
+from loadermap import enemystates
 
 from scripts.utility import cut_image, get_imag_dir, get_images, Animation
-
+from scripts.faisca import Faisca
 class PhysicsEntity:
     def __init__(self,pygm, entype, pos, size):
         self.game = pygm
@@ -138,3 +141,74 @@ class Player(PhysicsEntity):
             self.jumps -= 1
             self.tp_air= 5
             return True
+        
+        
+class Enemy(PhysicsEntity):
+    def __init__(self,pygm, pos, size):
+        super().__init__(pygm,'enemy', pos, size)
+        self.life = 100
+        self.graph = {
+            'idle':{'walk':0.5, 'run':0.2, 'jump':0.3},
+            'walk':{'idle':0.5, 'run':0.8, 'jump':0.1},
+            'run':{'idle':0.4, 'walk':0.7, 'jump':0.1},
+            'jump':{'idle':0.1, 'walk':0.2, 'run':0.7}
+        }
+        self.state = 'idle'
+        self.flip = False
+        self.set_state('idle')
+        
+    def update(self, tilemap, movement=(0,0)):
+        super().update(tilemap, movement)
+        if self.life <= 0:
+            self.terminou = True
+        elif self.colison['right'] or self.colison['left']:
+            self.state = 'idle'
+            self.set_state('idle')
+            self.vel[1] = 0
+        elif self.colison['up']:
+            if self.vel[1] > 0:
+                self.state = 'idle'
+                self.set_state('idle')
+        elif self.colison['down']:
+            self.vel[1] = 0
+            self.state = 'jump'
+            self.set_state('jump')
+        else:
+            self.vel[1] += 0.1
+            if self.state == 'idle':
+                if self.vel[0] > 0:
+                    self.flip = False
+                if self.vel[0] < 0:
+                    self.flip = True
+            elif self.state == 'run':
+                if self.vel[0] > 0:
+                    self.flip = False
+                if self.vel[0] < 0:
+                    self.flip = True
+            elif self.state == 'walk':
+                if self.vel[0] > 0:
+                    self.flip = False
+                if self.vel[0] < 0:
+                    self.flip = True
+            elif self.state == 'jump':
+                if self.vel[0] > 0:
+                    self.flip = False
+                if self.vel[0] < 0:
+                    self.flip = True
+            self.set_state(self.state)
+            
+    def set_state(self, state):
+        if state != self.state:
+            self.state = state
+            if state == 'idle':
+                self.vel[0] = 0
+                self.anim = self.game.enemy_idle
+            elif state == 'walk':
+                self.vel[0] = 1
+                self.anim = self.game.enemy_walk
+            elif state == 'run':
+                self.vel[0] = 3
+                self.anim = self.game.enemy_run
+            elif state == 'jump':
+                self.vel[0] = -2
+                self.anim = self.game.enemy_jump
